@@ -1,0 +1,4 @@
+cd ~/Desktop/techsalary
+source venv/bin/activate
+brew services start postgresql@15
+uvicorn src.api.main:app --reload

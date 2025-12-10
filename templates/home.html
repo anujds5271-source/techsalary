@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Home - TechSalary.in{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="text-center mb-12">
+    <h1 class="text-5xl font-bold text-gray-800 mb-4">
+        Discover Tech Salaries in India 🇮🇳
+    </h1>
+    <p class="text-xl text-gray-600 mb-8">
+        Real salary data from 1000+ companies. Make informed career decisions.
+    </p>
+</div>
+
+<!-- Search Form -->
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8 mb-8">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Search Salaries</h2>
+    
+    <form id="searchForm" class="space-y-4">
+        
+        <!-- Company Search -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
+            <input 
+                type="text" 
+                id="company" 
+                placeholder="e.g., Google, Amazon, Microsoft"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+        </div>
+
+        <!-- Location Search -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <input 
+                type="text" 
+                id="city" 
+                placeholder="e.g., Bangalore, Hyderabad, Mumbai"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+        </div>
+
+        <!-- Role Search -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Job Role</label>
+            <input 
+                type="text" 
+                id="role" 
+                placeholder="e.g., Software Engineer, Product Manager"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+        </div>
+
+        <!-- Salary Range -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Min Salary (₹)</label>
+                <input 
+                    type="number" 
+                    id="min_salary" 
+                    placeholder="e.g., 1000000"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Max Salary (₹)</label>
+                <input 
+                    type="number" 
+                    id="max_salary" 
+                    placeholder="e.g., 5000000"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+        </div>
+
+        <!-- Experience Range -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Min Experience (years)</label>
+                <input 
+                    type="number" 
+                    id="min_experience" 
+                    placeholder="e.g., 0"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Max Experience (years)</label>
+                <input 
+                    type="number" 
+                    id="max_experience" 
+                    placeholder="e.g., 10"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+            </div>
+        </div>
+
+        <!-- Search Button -->
+        <button 
+            type="submit"
+            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition duration-200"
+        >
+            🔍 Search Salaries
+        </button>
+    </form>
+</div>
+
+<!-- Results Container -->
+<div id="results" class="max-w-6xl mx-auto">
+    <!-- Results will be loaded here via JavaScript -->
+</div>
+
+<!-- Quick Stats -->
+<div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+    <div class="bg-white p-6 rounded-lg shadow text-center">
+        <div class="text-4xl font-bold text-blue-600" id="totalCompanies">-</div>
+        <div class="text-gray-600 mt-2">Companies</div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow text-center">
+        <div class="text-4xl font-bold text-green-600" id="totalSalaries">-</div>
+        <div class="text-gray-600 mt-2">Salary Entries</div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow text-center">
+        <div class="text-4xl font-bold text-purple-600" id="avgSalary">-</div>
+        <div class="text-gray-600 mt-2">Avg Salary (₹L)</div>
+    </div>
+</div>
+
+<script>
+// Search Form Handler
+document.getElementById('searchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const params = new URLSearchParams();
+    
+    const company = document.getElementById('company').value;
+    const city = document.getElementById('city').value;
+    const role = document.getElementById('role').value;
+    const min_salary = document.getElementById('min_salary').value;
+    const max_salary = document.getElementById('max_salary').value;
+    const min_experience = document.getElementById('min_experience').value;
+    const max_experience = document.getElementById('max_experience').value;
+    
+    if (company) params.append('company', company);
+    if (city) params.append('city', city);
+    if (role) params.append('role', role);
+    if (min_salary) params.append('min_salary', min_salary);
+    if (max_salary) params.append('max_salary', max_salary);
+    if (min_experience) params.append('min_experience', min_experience);
+    if (max_experience) params.append('max_experience', max_experience);
+    
+    const response = await fetch(`/api/search/salaries?${params}`);
+    const data = await response.json();
+    
+    displayResults(data);
+});
+
+// Display Results
+function displayResults(data) {
+    const resultsDiv = document.getElementById('results');
+    
+    if (data.total === 0) {
+        resultsDiv.innerHTML = `
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                <p class="text-yellow-800">No results found. Try adjusting your search criteria.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = `
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold mb-4">Found ${data.total} Results</h2>
+            <div class="space-y-4">
+    `;
+    
+    data.data.forEach(salary => {
+        html += `
+            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800">${salary.company}</h3>
+                        <p class="text-gray-600">${salary.role}</p>
+                        <p class="text-sm text-gray-500">📍 ${salary.location}</p>
+                        <p class="text-sm text-gray-500">💼 ${salary.years_of_experience} years experience</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-green-600">₹${(salary.total_compensation / 100000).toFixed(1)}L</div>
+                        <p class="text-sm text-gray-500">Total CTC</p>
+                        <div class="mt-2 text-xs text-gray-600">
+                            <div>Base: ₹${(salary.base_salary / 100000).toFixed(1)}L</div>
+                            ${salary.bonus > 0 ? `<div>Bonus: ₹${(salary.bonus / 100000).toFixed(1)}L</div>` : ''}
+                            ${salary.stock_options > 0 ? `<div>Stocks: ₹${(salary.stock_options / 100000).toFixed(1)}L</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
+    resultsDiv.innerHTML = html;
+}
+
+// Load Stats on Page Load
+async function loadStats() {
+    try {
+        const [companiesRes, salariesRes, statsRes] = await Promise.all([
+            fetch('/api/companies'),
+            fetch('/api/salaries'),
+            fetch('/api/stats/salary-range')
+        ]);
+        
+        const companies = await companiesRes.json();
+        const salaries = await salariesRes.json();
+        const stats = await statsRes.json();
+        
+        document.getElementById('totalCompanies').textContent = companies.total;
+        document.getElementById('totalSalaries').textContent = salaries.total;
+        document.getElementById('avgSalary').textContent = (stats.average_salary / 100000).toFixed(1);
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+}
+
+loadStats();
+</script>
+
+{% endblock %}
